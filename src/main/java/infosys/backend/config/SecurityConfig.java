@@ -51,8 +51,8 @@ public class SecurityConfig {
                 // .requestMatchers("/api/admin/analytics/**").hasRole("ADMIN")
 
                 // All other requests
-                .anyRequest().authenticated()
                 .requestMatchers("/").permitAll()
+                .anyRequest().authenticated()
 
             );
 

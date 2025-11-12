@@ -1,20 +1,16 @@
-# Use a stable and Render-compatible Java image
-FROM eclipse-temurin:17-jdk-jammy
+# Use JDK 21 for Maven build
+FROM eclipse-temurin:21-jdk AS build
 
-# Set working directory inside the container
 WORKDIR /app
 
-# Copy all project files into the container
 COPY . .
 
-# Make the Maven wrapper executable
-RUN chmod +x mvnw
-
-# Build the Spring Boot app (skip tests to speed up)
 RUN ./mvnw clean package -DskipTests
 
-# Expose port 8080 for Render
-EXPOSE 8080
+# Use JDK 21 runtime
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 
-# Run the compiled JAR file
-ENTRYPOINT ["java", "-jar", "target/*.jar"]
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

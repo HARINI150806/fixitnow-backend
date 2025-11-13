@@ -3,7 +3,9 @@ package infosys.backend.service;
 import infosys.backend.enums.Role;
 import infosys.backend.model.User;
 import infosys.backend.repository.BookingRepository;
+import infosys.backend.repository.ChatNotificationRepository;
 import infosys.backend.repository.DocumentRepository;
+import infosys.backend.repository.MessageRepository;
 import infosys.backend.repository.ReportRepository;
 import infosys.backend.repository.ReviewRepository;
 import infosys.backend.repository.ServiceRepository;
@@ -24,6 +26,8 @@ public class UserService {
     private final ServiceRepository serviceRepository;
     private final DocumentRepository documentRepository;
     private final ReportRepository reportRepository;
+    private final ChatNotificationRepository chatNotificationRepository;
+    private final MessageRepository messageRepository;
 
     // 🔹 Read all users
     public List<User> getAllUsers() {
@@ -58,24 +62,42 @@ public class UserService {
         return userRepository.save(existing);
     }
 
-    @Transactional
+   @Transactional
 public void deleteUser(Long id) {
+
     User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-    // 1️⃣ Delete related entities
+    // 1️⃣ Delete chat messages
+    messageRepository.deleteBySenderId(id);
+    messageRepository.deleteByReceiverId(id);
+
+    // 2️⃣ Delete chat notifications
+    chatNotificationRepository.deleteBySenderId(id);
+    chatNotificationRepository.deleteByReceiverId(id);
+
+    // 3️⃣ Delete bookings
     bookingRepository.deleteByCustomerId(id);
     bookingRepository.deleteByProviderId(id);
+
+    // 4️⃣ Delete reviews
     reviewRepository.deleteByCustomerId(id);
     reviewRepository.deleteByProviderId(id);
+
+    // 5️⃣ Delete services
     serviceRepository.deleteByProviderId(id);
+
+    // 6️⃣ Delete documents
     documentRepository.deleteByProviderId(id);
+
+    // 7️⃣ Delete reports
     reportRepository.deleteByReportedById(id);
     reportRepository.deleteByTargetId(id);
 
-    // 2️⃣ Delete user
+    // 8️⃣ Finally delete user
     userRepository.deleteById(id);
 }
+
 
     public User findByUsername(String username) {
     return userRepository.findByName(username)

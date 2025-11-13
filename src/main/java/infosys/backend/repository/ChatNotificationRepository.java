@@ -17,7 +17,9 @@ public interface ChatNotificationRepository extends JpaRepository<ChatNotificati
     List<ChatNotification> findByReceiverOrderBySentAtDesc(User receiver);
     
     List<ChatNotification> findByReceiverAndIsReadFalseOrderBySentAtDesc(User receiver);
-    
+    void deleteBySenderId(Long senderId);
+void deleteByReceiverId(Long receiverId);
+
     long countByReceiverAndIsReadFalse(User receiver);
     
     List<ChatNotification> findByReceiverAndSenderOrderBySentAtDesc(User receiver, User sender);

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -17,8 +18,11 @@ public class MessageService {
 
     // Save a message
     public Message saveMessage(Message message) {
-        message.setSentAt(LocalDateTime.now());
-        return messageRepository.save(message);
+        if (message.getSentAt() == null) {
+    message.setSentAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
+}
+return messageRepository.save(message);
+
     }
 
     // Get chat history between two users

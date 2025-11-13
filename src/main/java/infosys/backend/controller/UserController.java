@@ -30,6 +30,15 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+@GetMapping("/admin")
+@PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('PROVIDER')")
+public ResponseEntity<User> getAdminUser() {
+    User admin = userService.getAdmin();
+    return ResponseEntity.ok(admin);
+}
+
+
+
     @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('PROVIDER')")
 @GetMapping("/providers")
 public ResponseEntity<List<User>> getAllProviders() {

@@ -95,5 +95,13 @@ public String getRole(Long id) {
     }
 }
 
+public User getAdmin() {
+    return userRepository.findByRole(Role.ADMIN)
+            .stream()
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Admin user not found"));
+}
+
+
 }
 

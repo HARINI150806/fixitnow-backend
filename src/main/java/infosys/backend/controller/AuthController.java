@@ -72,7 +72,7 @@ public class AuthController {
         // 🛑 If provider is unverified, warn instead of allowing full access
         if (user.getRole() == Role.PROVIDER && !user.isVerified()) {
             response.setMessage("Your provider account is pending admin verification.");
-            return ResponseEntity.ok(response); // ✅ return 200 with warning
+            
         }
 
         return ResponseEntity.ok(response);

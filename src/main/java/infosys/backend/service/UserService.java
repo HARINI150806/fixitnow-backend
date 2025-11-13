@@ -63,17 +63,8 @@ public void deleteUser(Long id) {
     User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-    // 1️⃣ Delete related entities
-    bookingRepository.deleteByCustomerId(id);
-    bookingRepository.deleteByProviderId(id);
-    reviewRepository.deleteByCustomerId(id);
-    reviewRepository.deleteByProviderId(id);
-    serviceRepository.deleteByProviderId(id);
-    documentRepository.deleteByProviderId(id);
-    reportRepository.deleteByReportedById(id);
-    reportRepository.deleteByTargetId(id);
-
-    // 2️⃣ Delete user
+   
+    
     userRepository.deleteById(id);
 }
 

@@ -28,7 +28,9 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .cors(cors -> cors.configurationSource(request -> {
             org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
             config.setAllowCredentials(true);
-            config.setAllowedOriginPatterns(java.util.List.of("*"));
+            config.setAllowedOriginPatterns(
+            java.util.List.of("https://fixitnow-frontend.onrender.com")
+    );
             config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             config.setAllowedHeaders(java.util.List.of("*"));
             config.setExposedHeaders(java.util.List.of("*"));

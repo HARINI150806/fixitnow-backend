@@ -22,10 +22,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final JwtUtil jwtUtil;
 
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/queue", "/topic");
-        config.setApplicationDestinationPrefixes("/app");
-    }
+public void configureMessageBroker(MessageBrokerRegistry config) {
+    config.enableSimpleBroker("/queue", "/topic");
+    config.setApplicationDestinationPrefixes("/app");
+
+    // 🔥 Make Spring route /user/{email}/queue/messages correctly
+    config.setUserDestinationPrefix("/user");
+}
+
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {

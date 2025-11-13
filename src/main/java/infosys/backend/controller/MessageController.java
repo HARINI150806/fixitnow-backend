@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,7 +121,8 @@ public void sendMessageWebSocket(
             .sender(sender)
             .receiver(receiver)
             .content(messageDTO.getContent())
-            .sentAt(LocalDateTime.now())
+            .sentAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")))
+
             .build();
 
     Message saved = messageService.saveMessage(message);

@@ -22,42 +22,42 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .cors(cors -> cors.configurationSource(request -> {
+            org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
+            config.setAllowCredentials(true);
+            config.setAllowedOriginPatterns(java.util.List.of("*"));
+            config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            config.setAllowedHeaders(java.util.List.of("*"));
+            config.setExposedHeaders(java.util.List.of("*"));
+            return config;
+        }))
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/services").permitAll()
+            .requestMatchers("/uploads/**").permitAll()
+            .requestMatchers("/ws/**").permitAll()
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .cors(cors -> {}) // Enable CORS
-            .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
-            .authorizeHttpRequests(auth -> auth
-                // 🔓 Public endpoints
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/services").permitAll()  // public service listing
-                .requestMatchers("/uploads/**").permitAll()  // allow static file access
-                .requestMatchers("/ws/**").permitAll()       // allow WebSocket handshake
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // preflight requests
+            .requestMatchers("/api/services/**").authenticated()
+            .requestMatchers("/api/users/**").authenticated()
+            .requestMatchers("/bookings/**").authenticated()
+            .requestMatchers("/reviews/**").authenticated()
+            .requestMatchers("/api/messages/**").authenticated()
+            .requestMatchers("/api/documents/**").authenticated()
+            .requestMatchers("/api/reports/**").authenticated()
+            .requestMatchers("/api/admin/analytics/**").authenticated()
 
-                // 🔐 Protected endpoints
-                .requestMatchers("/api/services/**").authenticated()
-                .requestMatchers("/api/users/**").authenticated()
-                .requestMatchers("/bookings/**").authenticated()
-                .requestMatchers("/reviews/**").authenticated()
-                .requestMatchers("/api/messages/**").authenticated()
-                .requestMatchers("/api/documents/**").authenticated()
-                .requestMatchers("/api/reports/**").authenticated()
+            .requestMatchers("/").permitAll()
+            .anyRequest().authenticated()
+        );
 
-                // 🧮 Admin Analytics endpoints (secured)
-                .requestMatchers("/api/admin/analytics/**").authenticated()
-                // 👉 If you want only admin role, you can use:
-                // .requestMatchers("/api/admin/analytics/**").hasRole("ADMIN")
+    http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-                // All other requests
-                .requestMatchers("/").permitAll()
-                .anyRequest().authenticated()
+    return http.build();
+}
 
-            );
-
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
 }

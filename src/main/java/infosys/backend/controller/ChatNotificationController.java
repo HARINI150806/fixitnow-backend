@@ -15,7 +15,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*")
+
 public class ChatNotificationController {
 
     private final ChatNotificationService notificationService;

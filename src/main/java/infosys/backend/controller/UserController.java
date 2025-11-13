@@ -84,15 +84,17 @@ public ResponseEntity<User> getUserById(@PathVariable Long id) {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id, Authentication auth) {
-        User currentUser = (User) auth.getPrincipal();
-        if (!currentUser.getRole().name().equals("ADMIN") && !currentUser.getId().equals(id)) {
-            return ResponseEntity.status(403).build();
-        }
-        userService.deleteUser(id);
-        return ResponseEntity.ok("User deleted successfully");
+@DeleteMapping("/{id}")
+public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+
+    if (!userRepository.existsById(id)) {
+        return ResponseEntity.badRequest().body("User not found");
     }
+
+    userService.deleteUser(id);
+    return ResponseEntity.ok("User deleted successfully");
+}
+
 
     // Find user by username
 @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER') or hasRole('PROVIDER')")
